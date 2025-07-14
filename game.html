@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>피싱메일 판단 게임</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #ffffff 0%, #ffffff 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 95%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .start-screen {
+            text-align: center;
+        }
+
+        .start-button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .start-button:hover {
+            background: #2980b9;
+        }
+
+        .game-screen {
+            display: none;
+        }
+
+        .question-title {
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 30px;
+            color: #2c3e50;
+        }
+
+        .emails-container {
+            display: flex;
+            gap: 20px;
+            justify-content: space-between;
+        }
+
+        .email-option {
+            flex: 1;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #f8f9fa;
+        }
+
+        .email-option:hover {
+            border-color: #3498db;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .email-header {
+            background: #e9ecef;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-size: 12px;
+        }
+
+        .email-from {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .email-subject {
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+
+        .email-body {
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        .feedback-screen {
+            display: none;
+            text-align: center;
+        }
+
+        .feedback-title {
+            font-size: 28px;
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .correct {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .incorrect {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .explanation {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .highlight-circle {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #e74c3c;
+            border-radius: 50%;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        .warning-point {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 10px 0;
+        }
+
+        .next-button, .finish-button {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .next-button:hover, .finish-button:hover {
+            background: #219a52;
+        }
+
+        .progress {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 16px;
+            color: #666;
+        }
+
+        .final-screen {
+            display: none;
+            text-align: center;
+        }
+
+        .score {
+            font-size: 36px;
+            color: #27ae60;
+            margin: 20px 0;
+        }
+
+        .restart-button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .emails-container {
+                flex-direction: column;
+            }
+            
+            .container {
+                width: 98%;
+                margin: 10px;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>피싱메일 판단 게임</h1>
+            <p>안전한 이메일 사용을 위한 교육용 게임</p>
+        </div>
+
+        <div class="content">
+            <!-- 시작 화면 -->
+            <div id="startScreen" class="start-screen">
+                <h2>피싱메일을 구별하는 방법을 배워보세요!</h2>
+                <p style="margin: 20px 0; color: #666;">
+                    두 개의 이메일 중 어떤 것이 피싱메일인지 맞춰보세요.<br>
+                    총 3문제가 출제됩니다.
+                </p>
+                <button class="start-button" onclick="startGame()">게임 시작</button>
+            </div>
+
+            <!-- 게임 화면 -->
+            <div id="gameScreen" class="game-screen">
+                <div class="progress">
+                    문제 <span id="currentQuestion">1</span> / 3
+                </div>
+                <h2 class="question-title">어떤 것이 피싱메일일까요?</h2>
+                <div class="emails-container">
+                    <div class="email-option" id="leftEmail" onclick="selectEmail('left')">
+                        <div class="email-header">
+                            <div class="email-from" id="leftFrom"></div>
+                            <div>받은 날짜: <span id="leftDate"></span></div>
+                        </div>
+                        <div class="email-subject" id="leftSubject"></div>
+                        <div class="email-body" id="leftBody"></div>
+                    </div>
+                    <div class="email-option" id="rightEmail" onclick="selectEmail('right')">
+                        <div class="email-header">
+                            <div class="email-from" id="rightFrom"></div>
+                            <div>받은 날짜: <span id="rightDate"></span></div>
+                        </div>
+                        <div class="email-subject" id="rightSubject"></div>
+                        <div class="email-body" id="rightBody"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 피드백 화면 -->
+            <div id="feedbackScreen" class="feedback-screen">
+                <div id="feedbackTitle" class="feedback-title"></div>
+                <div class="explanation">
+                    <h3>🔍 피싱메일의 특징</h3>
+                    <div id="explanationContent"></div>
+                </div>
+                <button id="nextButton" class="next-button" onclick="nextQuestion()">다음 문제</button>
+            </div>
+
+            <!-- 최종 결과 화면 -->
+            <div id="finalScreen" class="final-screen">
+                <h2>🎉 게임 완료!</h2>
+                <div class="score">
+                    최종 점수: <span id="finalScore">0</span>/3
+                </div>
+                <div id="finalMessage"></div>
+                <button class="restart-button" onclick="window.open('https://naver.me/FXkOuZ2Q')">설문참여</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 게임 상태 변수
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let questions = [];
+
+        // 문제 데이터
+        const questionData = [
+            {
+                left: {
+                    from: "noreply@naver.com",
+                    date: "2024.07.04 14:30",
+                    subject: "네이버 계정 보안 업데이트 완료",
+                    body: "안녕하세요. 네이버입니다.<br><br>고객님의 계정 보안이 성공적으로 업데이트되었습니다.<br><br>• 2단계 인증 활성화<br>• 비밀번호 변경<br>• 로그인 알림 설정<br><br>추가 문의사항이 있으시면 고객센터로 연락해 주세요.<br><br>감사합니다."
+                },
+                right: {
+                    from: "security-team@naver-security.co.kr",
+                    date: "2024.07.04 15:42",
+                    subject: "긴급: 계정이 해킹당했습니다! 즉시 확인하세요",
+                    body: "경고: 귀하의 네이버 계정이 의심스러운 활동을 감지했습니다.<br><br>즉시 아래 링크를 클릭하여 계정을 확인하지 않으면 24시간 내에 영구적으로 차단됩니다.<br><br> <span style='color: blue; text-decoration: underline;'>http://naver-security-check.ml/verify</span><br><br>이 이메일을 무시하면 모든 데이터가 삭제될 수 있습니다.<br><br>네이버 보안팀"
+                },
+                correct: "right",
+                explanation: [
+                    "발신자 도메인이 의심스럽습니다 (naver-security.co.kr - 공식 도메인이 아님)",
+                    "긴급성을 강조하는 제목과 내용 (긴급, 24시간 내 차단 등)",
+                    "의심스러운 URL (naver-security-check.ml - .ml은 의심스러운 도메인)",
+                    "위협적인 언어 사용 (데이터 삭제, 영구 차단 등)",
+                    "즉시 행동을 요구하는 내용"
+                ]
+            },
+            {
+                left: {
+                    from: "delivery@cjlogistics.com",
+                    date: "2024.07.04 09:15",
+                    subject: "택배 배송 안내",
+                    body: "안녕하세요. CJ대한통운입니다.<br><br>주문하신 상품이 배송 중입니다.<br><br>• 운송장번호: 123456789012<br>• 예상 도착일: 2024.07.05<br>• 배송지: 서울시 강남구<br><br>배송 현황은 CJ대한통운 홈페이지에서 확인하실 수 있습니다.<br><br>감사합니다."
+                },
+                right: {
+                    from: "info@cj-logistics-korea.net",
+                    date: "2024.07.04 16:23",
+                    subject: "택배 배송실패! 재배송을 위해 개인정보 재확인 필요",
+                    body: "CJ대한통운에서 알려드립니다.<br><br>배송지 정보 오류로 인해 택배 배송에 실패했습니다.<br><br>재배송을 위해 아래 링크에서 개인정보를 다시 입력해주세요:<br><br>👉 <span style='color: blue; text-decoration: underline;'>http://cj-redelivery.tk/confirm</span><br><br>⚠️ 3일 이내 미확인시 반송처리됩니다.<br><br>* 본인확인을 위해 카드정보 입력이 필요할 수 있습니다.<br><br>CJ대한통운"
+                },
+                correct: "right",
+                explanation: [
+                    "발신자 도메인이 의심스럽습니다 (cj-logistics-korea.net - 공식 도메인이 아님)",
+                    "개인정보 재입력을 요구합니다",
+                    "의심스러운 URL (.tk 도메인)",
+                    "카드정보 입력을 요구하는 내용",
+                    "시간 제한을 두어 압박감을 조성"
+                ]
+            },
+            {
+                left: {
+                    from: "promotion@samsung.com",
+                    date: "2024.07.04 11:20",
+                    subject: "삼성 갤럭시 S24 사전예약 이벤트",
+                    body: "안녕하세요. 삼성전자입니다.<br><br>새로 출시되는 갤럭시 S24 사전예약 이벤트를 안내드립니다.<br><br>• 사전예약 기간: 2024.07.05 ~ 2024.07.15<br>• 혜택: 무선충전기 증정<br>• 예약 방법: 삼성 공식 홈페이지<br><br>자세한 내용은 삼성닷컴에서 확인하세요.<br><br>감사합니다."
+                },
+                right: {
+                    from: "winner@samsung-event.org",
+                    date: "2024.07.04 13:47",
+                    subject: "축하합니다! 삼성 갤럭시 S24 당첨되셨습니다!",
+                    body: "축하드립니다! <br><br>삼성전자 럭키드로우 이벤트에서 갤럭시 S24(150만원 상당)에 당첨되셨습니다!<br><br> 당첨상품 수령 방법:<br>1. 아래 링크 클릭<br>2. 개인정보 입력 (주민번호, 계좌번호)<br>3. 배송비 5만원 선결제<br><br><span style='color: blue; text-decoration: underline;'>http://samsung-winner.ml/claim</span><br><br> 48시간 내 미완료시 당첨 취소됩니다.<br><br>삼성전자 이벤트팀"
+                },
+                correct: "right",
+                explanation: [
+                    "발신자 도메인이 의심스럽습니다 (samsung-event.org - 공식 도메인이 아님)",
+                    "예상치 못한 당첨 소식 (신청하지 않은 이벤트)",
+                    "개인정보(주민번호, 계좌번호) 입력을 요구",
+                    "배송비 선결제를 요구 (당첨 상품인데 비용 요구)",
+                    "48시간 제한으로 급작스러운 결정을 유도",
+                    "의심스러운 URL (.ml 도메인)"
+                ]
+            }
+        ];
+
+        function startGame() {
+            document.getElementById('startScreen').style.display = 'none';
+            document.getElementById('gameScreen').style.display = 'block';
+            currentQuestionIndex = 0;
+            score = 0;
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const question = questionData[currentQuestionIndex];
+            document.getElementById('currentQuestion').textContent = currentQuestionIndex + 1;
+            
+            // 왼쪽 이메일 로드
+            document.getElementById('leftFrom').textContent = `보낸이: ${question.left.from}`;
+            document.getElementById('leftDate').textContent = question.left.date;
+            document.getElementById('leftSubject').textContent = question.left.subject;
+            document.getElementById('leftBody').innerHTML = question.left.body;
+            
+            // 오른쪽 이메일 로드
+            document.getElementById('rightFrom').textContent = `보낸이: ${question.right.from}`;
+            document.getElementById('rightDate').textContent = question.right.date;
+            document.getElementById('rightSubject').textContent = question.right.subject;
+            document.getElementById('rightBody').innerHTML = question.right.body;
+        }
+
+        function selectEmail(side) {
+            const question = questionData[currentQuestionIndex];
+            const isCorrect = (side === question.correct);
+            
+            if (isCorrect) {
+                score++;
+            }
+            
+            showFeedback(isCorrect);
+        }
+
+        function showFeedback(isCorrect) {
+            document.getElementById('gameScreen').style.display = 'none';
+            document.getElementById('feedbackScreen').style.display = 'block';
+            
+            const feedbackTitle = document.getElementById('feedbackTitle');
+            const explanationContent = document.getElementById('explanationContent');
+            const question = questionData[currentQuestionIndex];
+            
+            if (isCorrect) {
+                feedbackTitle.textContent = '맞았습니다!';
+                feedbackTitle.className = 'feedback-title correct';
+            } else {
+                feedbackTitle.textContent = '틀렸습니다!';
+                feedbackTitle.className = 'feedback-title incorrect';
+            }
+            
+            // 설명 내용 생성
+            let explanationHTML = '';
+            question.explanation.forEach(point => {
+                explanationHTML += `
+                    <div class="warning-point">
+                        <span class="highlight-circle"></span>
+                        ${point}
+                    </div>
+                `;
+            });
+            explanationContent.innerHTML = explanationHTML;
+            
+            // 버튼 텍스트 변경
+            const nextButton = document.getElementById('nextButton');
+            if (currentQuestionIndex === 2) {
+                nextButton.textContent = '결과 보기';
+                nextButton.className = 'finish-button';
+            } else {
+                nextButton.textContent = '다음 문제';
+                nextButton.className = 'next-button';
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex === 2) {
+                showFinalResult();
+            } else {
+                currentQuestionIndex++;
+                document.getElementById('feedbackScreen').style.display = 'none';
+                document.getElementById('gameScreen').style.display = 'block';
+                loadQuestion();
+            }
+        }
+
+        function showFinalResult() {
+            document.getElementById('feedbackScreen').style.display = 'none';
+            document.getElementById('finalScreen').style.display = 'block';
+            
+            document.getElementById('finalScore').textContent = score;
+            
+            const finalMessage = document.getElementById('finalMessage');
+            if (score === 3) {
+                finalMessage.innerHTML = '<p style="color: #27ae60;">완벽합니다! 피싱메일을 잘 구별하실 수 있습니다.</p>';
+            } else if (score === 2) {
+                finalMessage.innerHTML = '<p style="color: #f39c12;">좋습니다! 조금만 더 주의하시면 됩니다.</p>';
+            } else if (score === 1) {
+                finalMessage.innerHTML = '<p style="color: #e67e22;">피싱메일 특징을 다시 한 번 학습해보세요.</p>';
+            } else {
+                finalMessage.innerHTML = '<p style="color: #e74c3c;">피싱메일에 대해 더 공부하시고 다시 도전해보세요!</p>';
+            }
+        }
+
+        function restartGame() {
+            document.getElementById('finalScreen').style.display = 'none';
+            document.getElementById('startScreen').style.display = 'block';
+            currentQuestionIndex = 0;
+            score = 0;
+        }
+    </script>
+</body>
+</html>

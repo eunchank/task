@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>터어어얼렸구나</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #c7eafe;
+      color: #1f2937;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .warning-box {
+      background-color: #e0f2fe;
+      border: 2px solid #1e3a8a;;
+      border-radius: 15px;
+      padding: 30px;
+      max-width: 600px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .warning-box h1 {
+      color: #b91c1c;
+      font-size: 20px;
+      margin-bottom: 15px;
+    }
+
+    .warning-box p {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      margin-bottom: 25px;
+    }
+
+    button {
+      background-color: #3b82f6;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #2563eb;
+    }
+  </style>
+</head>
+<body>
+  <div class="warning-box">
+    <h1> 혹시 아무 의심없이 로그인 시도를 하신건..?</h1>
+    <p>
+      방금 보신 것은 네이버 로그인 화면을 모방한 <strong>피싱 사이트</strong>였습니다!<br>
+      <strong>피싱사이트</strong>란, 사용자를 속여서 개인정보(아이디, 비밀번호, 금융정보 등)를 훔치기 위해 <strong>실제 사이트처럼 꾸민 가짜 웹사이트</strong>를 말합니다.<br><br>
+      실제 사이트와 매우 유사해 보일 수 있으므로 항상 <strong>URL을 확인</strong>하고,
+      <strong><br>2차 인증</strong>을 설정하며, 의심스러운 사이트에 정보를 입력하지 마세요!
+      <br>간단한 게임과 설문조사도 참여 해 주세요!
+    </p>
+    <button onclick="location.href='game.html'">게임/설문 시작</button>
+  </div>
+</body>
+</html>
+
+<!-- ⚠️ -->
+
